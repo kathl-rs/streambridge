@@ -96,7 +96,9 @@ pub fn encode_frame(
     buffers.set_quality(quality);
 
     match fourcc {
-        FourCCVideoType::UYVY => {
+        // UYVA = UYVY followed by a separate alpha plane; the alpha plane is
+        // appended after the UYVY rows, so it is simply ignored here.
+        FourCCVideoType::UYVY | FourCCVideoType::UYVA => {
             buffers.ensure_capacity(w, h);
 
             uyvy_to_yuv420_planar(

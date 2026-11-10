@@ -1,0 +1,22 @@
+name: build-windows
+on:
+  workflow_dispatch:
+  push:
+    branches: [uyva-fix]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install NASM and CMake
+        run: choco install nasm cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y --no-progress
+      - name: Build
+        shell: pwsh
+        run: |
+          $env:PATH = "C:\Program Files\NASM;$env:PATH"
+          cargo build --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: streambridge-windows
+          path: target/release/streambridge.exe
